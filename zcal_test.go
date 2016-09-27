@@ -7,7 +7,7 @@ import (
 	. "github.com/tzengyuxio/zcal"
 )
 
-func TestGregorianYearToStemBranch(t *testing.T) {
+func TestWesternYearToStemBranch(t *testing.T) {
 	for _, pair := range []struct {
 		year       int
 		stemBranch string
@@ -21,7 +21,7 @@ func TestGregorianYearToStemBranch(t *testing.T) {
 		{1912, "壬子"},  // 中華民國元年
 		{2012, "壬辰"},
 	} {
-		stemBranch := GregorianYearToStemBranch(pair.year)
+		stemBranch := WesternYearToStemBranch(pair.year)
 		assert.Equal(t, pair.stemBranch, stemBranch, "For year %d expected %s got %s", pair.year, pair.stemBranch, stemBranch)
 	}
 }
@@ -31,7 +31,9 @@ func TestWesternCalendarToStemBranch(t *testing.T) {
 		y, m, d    int
 		stemBranch string
 	}{
-		{1384, 12, 13, "甲子"},
+		{-720, 2, 22, "己巳"},  // 魯隱公三年夏曆二月己巳日，西元前 720 年 2 月 22 日
+		{-211, 11, 1, "癸丑"},  // 三十七年十月癸丑，始皇出遊
+		{1384, 12, 13, "甲子"}, // 洪武十七年，朔旦冬至甲子
 		{1912, 2, 18, "甲子"},
 		{9912, 2, 18, "甲子"},
 	} {

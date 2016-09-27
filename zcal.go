@@ -22,12 +22,12 @@ func StemBranch(n int) string {
 	return stems[g] + branches[z]
 }
 
-// GregorianYearToStemBranch calculates the corresponding stem-branch with the
+// WesternYearToStemBranch calculates the corresponding stem-branch with the
 // given year.
 //
 // Notice: there is no "0 year" in Gregorian year, the previous year of AD 1 is
 // BC 1 (n == -1). If n == 0, the return value will be the same as n == -1.
-func GregorianYearToStemBranch(n int) string {
+func WesternYearToStemBranch(n int) string {
 	if n < 0 {
 		return StemBranch((n - 3) % 60)
 	}
@@ -35,12 +35,15 @@ func GregorianYearToStemBranch(n int) string {
 }
 
 // WesternCalendarToStemBranch calculates the corresponding stem-branch with
-// the given Gregorian year, month and day of month
+// the given western year, month and day of month
 func WesternCalendarToStemBranch(y, m, d int) string {
 	var jd float64
 	if y > 1582 || (y == 1582 && m >= 10) {
 		jd = GregorianCalendarToJD(y, m, d)
 	} else {
+		if y < 0 {
+			y++
+		}
 		jd = JulianCalendarToJD(y, m, d)
 	}
 	days := int(jd - JDOfShuodanDongzhi)
