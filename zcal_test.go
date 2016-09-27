@@ -56,6 +56,7 @@ func TestGregorianCalendarToJD(t *testing.T) {
 		{1, 7, 27, 1721632.5},
 		{123, 8, 8, 1766203.5},
 		{1678, 9, 9, 2334188.5},
+		{2000, 1, 1, 2451544.5},
 		{2000, 10, 10, 2451827.5},
 	} {
 		jd := GregorianCalendarToJD(pair.y, pair.m, pair.d)
@@ -83,5 +84,54 @@ func TestJulianCalendarToJD(t *testing.T) {
 	} {
 		jd := JulianCalendarToJD(pair.y, pair.m, pair.d)
 		assert.Equal(t, pair.jd, jd, "For date %04d-%02d-%02d expected %.1f got %.1f", pair.y, pair.m, pair.d, pair.jd, jd)
+	}
+}
+
+func TestJDToGregorianCalendar(t *testing.T) {
+	for _, pair := range []struct {
+		y, m, d int
+		jd      float64
+	}{
+		{-4699, 1, 1, 4785.5},
+		{-2114, 2, 12, 948979.5},
+		{-1050, 3, 23, 1337636.5},
+		{-123, 4, 14, 1676238.5},
+		{-1, 5, 25, 1720838.5},
+		{0, 6, 16, 1721226.5},
+		{1, 7, 27, 1721632.5},
+		{123, 8, 8, 1766203.5},
+		{1678, 9, 9, 2334188.5},
+		{2000, 1, 1, 2451544.5},
+		{2000, 10, 10, 2451827.5},
+	} {
+		y, m, d, _ := JDToGregorianCalendar(pair.jd)
+		assert.Equal(t, pair.y, y, "For JD %.4f expected year %02d got %02d", pair.jd, pair.y, y)
+		assert.Equal(t, pair.m, m, "For JD %.4f expected month %02d got %02d", pair.jd, pair.m, m)
+		assert.Equal(t, pair.d, d, "For JD %.4f expected day %02d got %02d", pair.jd, pair.d, d)
+	}
+}
+
+func TestJDToJulianCalendar(t *testing.T) {
+	for _, pair := range []struct {
+		y, m, d int
+		jd      float64
+	}{
+		{-4712, 1, 2, 0.5},
+		{-4699, 1, 1, 4748.5},
+		{-2114, 2, 12, 948961.5},
+		{-1050, 3, 23, 1337626.5},
+		{-123, 4, 14, 1676235.5},
+		{-1, 5, 25, 1720836.5},
+		{0, 6, 16, 1721224.5},
+		{1, 7, 27, 1721630.5},
+		{123, 8, 8, 1766202.5},
+		{1384, 12, 13, JDOfShuodanDongzhi},
+		{1678, 10, 9, 2334228.5},
+		{2000, 11, 10, 2451871.5},
+	} {
+		y, m, d, _ := JDToJulianCalendar(pair.jd)
+		assert.Equal(t, pair.y, y, "For JD %.4f expected year %02d got %02d", pair.jd, pair.y, y)
+		assert.Equal(t, pair.m, m, "For JD %.4f expected month %02d got %02d", pair.jd, pair.m, m)
+		assert.Equal(t, pair.d, d, "For JD %.4f expected day %02d got %02d", pair.jd, pair.d, d)
 	}
 }

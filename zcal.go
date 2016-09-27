@@ -62,7 +62,16 @@ func GregorianCalendarToJD(year, month, day int) float64 {
 
 // JDToGregorianCalendar converts Julian date to Gregorian calendar date.
 func JDToGregorianCalendar(jd float64) (y, m, d int, t float64) {
-	return 0, 0, 0, 0.0
+	jdn := int(jd + .5)
+	f := jdn + 1401 + (((4*jdn+274277)/146097)*3)/4 - 38
+	e := 4*f + 3
+	g := (e % 1461) / 4
+	h := 5*g + 2
+	d = (h%153)/5 + 1
+	m = (h/153+2)%12 + 1
+	y = e/1461 - 4716 + (12+2-m)/12
+	t = (jd + .5) - float64(jdn)
+	return
 }
 
 // JulianCalendarToJD converts Julian calendar date to Julian date.
@@ -77,5 +86,14 @@ func JulianCalendarToJD(year, month, day int) float64 {
 
 // JDToJulianCalendar converts Julian date to Julian caldendar date.
 func JDToJulianCalendar(jd float64) (y, m, d int, t float64) {
-	return 0, 0, 0, 0.0
+	jdn := int(jd + .5)
+	f := jdn + 1401
+	e := 4*f + 3
+	g := (e % 1461) / 4
+	h := 5*g + 2
+	d = (h%153)/5 + 1
+	m = (h/153+2)%12 + 1
+	y = e/1461 - 4716 + (12+2-m)/12
+	t = (jd + .5) - float64(jdn)
+	return
 }
