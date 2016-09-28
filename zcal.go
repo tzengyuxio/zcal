@@ -106,11 +106,45 @@ func JDToJulianCalendar(jd float64) (y, m, d int, t float64) {
 	return
 }
 
+// LeapYearGonghe returns true if year y in the Gonghe year is a leap year
+func LeapYearGonghe(y int) bool {
+	return (y%4 == 0 && y%100 != 0) || y%500 == 0
+}
+
 // JDToGongheCalendar converts Julian date to Gonghe calendar date.
 func JDToGongheCalendar(jd float64) (y, m, d int, t float64) {
 	gdn, t := depart(jd - JDOfGongheFirstDay)
-	y, d = gdn/365, gdn%365
-	m = 1
+	α := 0
+	if gdn < 0 {
+		k := (-gdn / 182621) + 1
+		gdn += k * 182621
+		α = k * 500
+	}
+	y = gdn * 500 / 182621
+	d = gdn - y*365 - y/4 + y/100 - y/500
+	if d < 0 {
+		if LeapYearGonghe(y) {
+			d += 366
+		} else {
+			d += 365
+		}
+		y--
+	}
+	if LeapYearGonghe(y+1) && d >= 366 {
+		d -= 366
+		y++
+	} else if !LeapYearGonghe(y+1) && d >= 365 {
+		d -= 365
+		y++
+	}
+	m, d = d/61, d%61
+	if d < 30 {
+		m *= 2
+	} else {
+		m = m*2 + 1
+		d -= 30
+	}
+	y, m, d = y+1-α, m+1, d+1
 	return
 }
 
