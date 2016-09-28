@@ -11,6 +11,8 @@ var JDOfGongheFirstDay = 1414289.5
 // JDOfShuodanDongzhi 為西曆 1384年，洪武十七年，朔旦冬至甲子日
 var JDOfShuodanDongzhi = 2226910.5
 
+var jdOfGregorianCalendar = 2299160.5
+
 func depart(n float64) (int, float64) {
 	i := math.Floor(n)
 	f := n - i
@@ -159,4 +161,35 @@ func GongheCalendarToJD(year, month, day int) float64 {
 	}
 
 	return float64(gdn) + JDOfGongheFirstDay
+}
+
+// GongheCalendarToWesternCalendar converts Gonghe calendar date go Western
+// calendar date.
+func GongheCalendarToWesternCalendar(y, m, d int) (year, month, day int) {
+	jd := GongheCalendarToJD(y, m, d)
+	if jd >= jdOfGregorianCalendar {
+		year, month, day, _ = JDToGregorianCalendar(jd)
+	} else {
+		year, month, day, _ = JDToJulianCalendar(jd)
+		if year <= 0 {
+			year--
+		}
+	}
+	return
+}
+
+// WesternCalendarToGongheCalendar converts Western calendar date to Gonghe
+// calendar date.
+func WesternCalendarToGongheCalendar(y, m, d int) (year, month, day int) {
+	var jd float64
+	if y > 1582 || (y == 1582 && m >= 10) {
+		jd = GregorianCalendarToJD(y, m, d)
+	} else {
+		if y < 0 {
+			y++
+		}
+		jd = JulianCalendarToJD(y, m, d)
+	}
+	year, month, day, _ = JDToGongheCalendar(jd)
+	return
 }

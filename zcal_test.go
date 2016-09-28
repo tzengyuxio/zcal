@@ -202,3 +202,37 @@ func TestGongheCalendarToJD(t *testing.T) {
 		assert.Equal(t, pair.jd, jd, "For date %04d-%02d-%02d expected %.1f got %.1f", pair.y, pair.m, pair.d, pair.jd, jd)
 	}
 }
+
+func TestGCalToWCal(t *testing.T) {
+	for _, pair := range []struct {
+		gy, gm, gd int
+		wy, wm, wd int
+	}{
+		{1, 1, 1, -841, 2, 12},
+		{2225, 11, 19, 1384, 12, 13},
+		{2752, 9, 7, 1911, 10, 10}, // not manual calculate yet
+		{2819, 2, 2, 1978, 3, 4},   // not manual calculate yet
+	} {
+		y, m, d := GongheCalendarToWesternCalendar(pair.gy, pair.gm, pair.gd)
+		assert.Equal(t, pair.wy, y, "For gcal date %04d-%02d-%02d expected year %d got %d", pair.gy, pair.gm, pair.gd, pair.wy, y)
+		assert.Equal(t, pair.wm, m, "For gcal date %04d-%02d-%02d expected month %d got %d", pair.gy, pair.gm, pair.gd, pair.wm, m)
+		assert.Equal(t, pair.wd, d, "For gcal date %04d-%02d-%02d expected day %d got %d", pair.gy, pair.gm, pair.gd, pair.wd, d)
+	}
+}
+
+func TestWCalToGCal(t *testing.T) {
+	for _, pair := range []struct {
+		gy, gm, gd int
+		wy, wm, wd int
+	}{
+		{1, 1, 1, -841, 2, 12},
+		{2225, 11, 19, 1384, 12, 13},
+		{2752, 9, 7, 1911, 10, 10}, // not manual calculate yet
+		{2819, 2, 2, 1978, 3, 4},   // not manual calculate yet
+	} {
+		y, m, d := WesternCalendarToGongheCalendar(pair.wy, pair.wm, pair.wd)
+		assert.Equal(t, pair.gy, y, "For wcal date %04d-%02d-%02d expected year %d got %d", pair.wy, pair.wm, pair.wd, pair.gy, y)
+		assert.Equal(t, pair.gm, m, "For wcal date %04d-%02d-%02d expected month %d got %d", pair.wy, pair.wm, pair.wd, pair.gm, m)
+		assert.Equal(t, pair.gd, d, "For wcal date %04d-%02d-%02d expected day %d got %d", pair.wy, pair.wm, pair.wd, pair.gd, d)
+	}
+}
