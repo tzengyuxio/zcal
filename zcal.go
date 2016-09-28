@@ -1,5 +1,7 @@
 package zcal
 
+import "math"
+
 var stems = []string{"甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"}
 var branches = []string{"子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"}
 
@@ -8,6 +10,12 @@ var JDOfGongheFirstDay = 1414289.5
 
 // JDOfShuodanDongzhi 為西曆 1384年，洪武十七年，朔旦冬至甲子日
 var JDOfShuodanDongzhi = 2226910.5
+
+func depart(n float64) (int, float64) {
+	i := math.Floor(n)
+	f := n - i
+	return int(i), f
+}
 
 // StemBranch converts a number into Chinese sexagenary cycle representation.
 func StemBranch(n int) string {
@@ -96,4 +104,25 @@ func JDToJulianCalendar(jd float64) (y, m, d int, t float64) {
 	y = e/1461 - 4716 + (12+2-m)/12
 	t = (jd + .5) - float64(jdn)
 	return
+}
+
+// JDToGongheCalendar converts Julian date to Gonghe calendar date.
+func JDToGongheCalendar(jd float64) (y, m, d int, t float64) {
+	gdn, t := depart(jd - JDOfGongheFirstDay)
+	y, d = gdn/365, gdn%365
+	m = 1
+	return
+}
+
+// GongheCalendarToJD converts Gonghe calendar date to Julian date.
+func GongheCalendarToJD(year, month, day int) float64 {
+	y, m, d := year-1, month-1, day-1
+	gdn := y*365 + y/4 - y/100 + y/500
+	gdn += m*30 + m/2
+	gdn += d
+	if y < 0 {
+		gdn--
+	}
+
+	return float64(gdn) + JDOfGongheFirstDay
 }

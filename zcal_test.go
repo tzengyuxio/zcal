@@ -31,6 +31,7 @@ func TestWesternCalendarToStemBranch(t *testing.T) {
 		y, m, d    int
 		stemBranch string
 	}{
+		{-841, 2, 12, "癸未"},  // 共和元年立春
 		{-720, 2, 22, "己巳"},  // 魯隱公三年夏曆二月己巳日，西元前 720 年 2 月 22 日
 		{-211, 11, 1, "癸丑"},  // 三十七年十月癸丑，始皇出遊
 		{1384, 12, 13, "甲子"}, // 洪武十七年，朔旦冬至甲子
@@ -73,6 +74,7 @@ func TestJulianCalendarToJD(t *testing.T) {
 		{-4699, 1, 1, 4748.5},
 		{-2114, 2, 12, 948961.5},
 		{-1050, 3, 23, 1337626.5},
+		{-840, 2, 12, JDOfGongheFirstDay},
 		{-123, 4, 14, 1676235.5},
 		{-1, 5, 25, 1720836.5},
 		{0, 6, 16, 1721224.5},
@@ -133,5 +135,40 @@ func TestJDToJulianCalendar(t *testing.T) {
 		assert.Equal(t, pair.y, y, "For JD %.4f expected year %02d got %02d", pair.jd, pair.y, y)
 		assert.Equal(t, pair.m, m, "For JD %.4f expected month %02d got %02d", pair.jd, pair.m, m)
 		assert.Equal(t, pair.d, d, "For JD %.4f expected day %02d got %02d", pair.jd, pair.d, d)
+	}
+}
+
+func TestJDToGongheCalendar(t *testing.T) {
+
+}
+
+func TestGongheCalendarToJD(t *testing.T) {
+	for _, pair := range []struct {
+		y, m, d int
+		jd      float64
+	}{
+		{-4, 4, 4, JDOfGongheFirstDay - 1733.0},
+		{-2, 2, 2, JDOfGongheFirstDay - 1065.0},
+		{-1, 1, 1, JDOfGongheFirstDay - 731.0},
+		{-1, 12, 30, JDOfGongheFirstDay - 367.0},
+		{0, 1, 1, JDOfGongheFirstDay - 366.0},
+		{0, 12, 31, JDOfGongheFirstDay - 1.0},
+		{1, 1, 1, JDOfGongheFirstDay},
+		{1, 1, 2, JDOfGongheFirstDay + 1.0},
+		{1, 1, 30, JDOfGongheFirstDay + 29.0},
+		{1, 2, 1, JDOfGongheFirstDay + 30.0},
+		{1, 12, 30, JDOfGongheFirstDay + 364.0},
+		{2, 2, 2, JDOfGongheFirstDay + 396.0},
+		{4, 1, 1, JDOfGongheFirstDay + 1095.0},
+		{4, 12, 31, JDOfGongheFirstDay + 1460.0},
+		{5, 1, 1, JDOfGongheFirstDay + 1461.0},
+		{100, 12, 30, JDOfGongheFirstDay + 36523.0},
+		{101, 1, 1, JDOfGongheFirstDay + 36524.0},
+		{500, 12, 31, JDOfGongheFirstDay + 182620.0},
+		{501, 1, 1, JDOfGongheFirstDay + 182621.0},
+		{2225, 11, 19, JDOfShuodanDongzhi},
+	} {
+		jd := GongheCalendarToJD(pair.y, pair.m, pair.d)
+		assert.Equal(t, pair.jd, jd, "For date %04d-%02d-%02d expected %.1f got %.1f", pair.y, pair.m, pair.d, pair.jd, jd)
 	}
 }
