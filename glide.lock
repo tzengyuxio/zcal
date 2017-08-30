@@ -1,6 +1,24 @@
-hash: 2609cc26f5f429d12fca87d14cf28ae88f48fc604c4db7a1f8e49d3ad7e82ceb
-updated: 2016-09-27T21:55:58.705419728+08:00
-imports: []
+hash: c0fabbf902e987c36fabea437f95ddbfad2ba44c58b088c4c6c6411f45efab9c
+updated: 2017-08-19T12:00:19.585532914+08:00
+imports:
+- name: github.com/soniakeys/meeus
+  version: 3dd2d4223a5dfe14523259f8e22ecd78ebe4bb7d
+  subpackages:
+  - base
+  - coord
+  - elementequinox
+  - globe
+  - julian
+  - moonphase
+  - nutation
+  - planetposition
+  - precess
+  - solar
+  - solstice
+- name: github.com/soniakeys/sexagesimal
+  version: f0ae4ddc0a5d62b465dbc028c256f0a661c4a99f
+- name: github.com/soniakeys/unit
+  version: d2387de21ca96ad92a8cdbcb3e82a828a4ae0c5f
 testImports:
 - name: github.com/davecgh/go-spew
   version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9

@@ -8,6 +8,10 @@ var branches = []string{"子", "丑", "寅", "卯", "辰", "巳", "午", "未", 
 // JDOfGongheFirstDay 為西曆前 841 年，共和元年立春日
 var JDOfGongheFirstDay = 1414289.5
 
+// JDOfGongheZeroDay 為西曆前 842 年，共和零年立春日
+// var JDOfGongheZeroDay = 1413604.5 // 1413605.454942
+var JDOfGongheZeroDay = 1413559.5 // 1413559.760417
+
 // JDOfShuodanDongzhi 為西曆 1384年，洪武十七年，朔旦冬至甲子日
 var JDOfShuodanDongzhi = 2226910.5
 
@@ -56,7 +60,7 @@ func WesternCalendarToStemBranch(y, m, d int) string {
 		}
 		jd = JulianCalendarToJD(y, m, d)
 	}
-	days := int(jd - JDOfShuodanDongzhi)
+	days := int(math.Floor(jd - JDOfShuodanDongzhi))
 	return StemBranch(days)
 }
 
@@ -113,6 +117,11 @@ func LeapYearGonghe(y int) bool {
 	return (y%4 == 0 && y%100 != 0) || y%500 == 0
 }
 
+// LeapYearGHC returns true if year y in the Gonghe year is a leap year
+func LeapYearGHC(y int) bool {
+	return (y%4 == 0 && y%128 != 0)
+}
+
 // JDToGongheCalendar converts Julian date to Gonghe calendar date.
 func JDToGongheCalendar(jd float64) (y, m, d int, t float64) {
 	gdn, t := depart(jd - JDOfGongheFirstDay)
@@ -147,6 +156,45 @@ func JDToGongheCalendar(jd float64) (y, m, d int, t float64) {
 		d -= 30
 	}
 	y, m, d = y+1-α, m+1, d+1
+	return
+}
+
+// JDToGHC converts Julian date to Gonghe calendar with 128-leap-rule
+func JDToGHC(jd float64) (y, m, d int, t float64) {
+	gdn, t := depart(jd - JDOfGongheZeroDay)
+	α := 0
+	if gdn < 0 {
+		// 46751 = 365 * 128 + 31
+		k := (-gdn / 46751) + 1
+		gdn += k * 46751
+		α = k * 128
+	}
+	y = gdn * 128 / 46751
+	d = gdn - y*365 - y/4 + y/128
+	if d < 0 {
+		if LeapYearGHC(y) {
+			d += 366
+
+		} else {
+			d += 365
+		}
+		y--
+	}
+	if LeapYearGHC(y+1) && d >= 366 {
+		d -= 366
+		y++
+	} else if !LeapYearGHC(y+1) && d >= 365 {
+		d -= 365
+		y++
+	}
+	m, d = d/61, d%61
+	if d < 30 {
+		m *= 2
+	} else {
+		m = m*2 + 1
+		d -= 30
+	}
+	y, m, d = y-α, m+1, d+1
 	return
 }
 
@@ -191,5 +239,21 @@ func WesternCalendarToGongheCalendar(y, m, d int) (year, month, day int) {
 		jd = JulianCalendarToJD(y, m, d)
 	}
 	year, month, day, _ = JDToGongheCalendar(jd)
+	return
+}
+
+// WesternCalendarToGHC converts Western calendar date to Gonghe
+// calendar date.
+func WesternCalendarToGHC(y, m, d int) (year, month, day int) {
+	var jd float64
+	if y > 1582 || (y == 1582 && m >= 10) {
+		jd = GregorianCalendarToJD(y, m, d)
+	} else {
+		if y < 0 {
+			y++
+		}
+		jd = JulianCalendarToJD(y, m, d)
+	}
+	year, month, day, _ = JDToGHC(jd)
 	return
 }

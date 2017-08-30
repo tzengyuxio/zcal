@@ -1,5 +1,9 @@
 package: github.com/tzengyuxio/zcal
-import: []
+import:
+- package: github.com/soniakeys/meeus
+  version: master
+- package: github.com/soniakeys/sexagesimal
+- package: github.com/soniakeys/unit
 testImport:
 - package: github.com/stretchr/testify
   version: ^1.1.4

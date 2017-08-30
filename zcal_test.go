@@ -1,6 +1,7 @@
 package zcal_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -31,9 +32,10 @@ func TestWesternCalendarToStemBranch(t *testing.T) {
 		y, m, d    int
 		stemBranch string
 	}{
-		{-841, 2, 12, "癸未"},  // 共和元年立春
-		{-720, 2, 22, "己巳"},  // 魯隱公三年夏曆二月己巳日，西元前 720 年 2 月 22 日
-		{-211, 11, 1, "癸丑"},  // 三十七年十月癸丑，始皇出遊
+		{-842, 2, 12, "戊寅"},  // 共和零年立春  6:15
+		{-841, 2, 12, "癸未"},  // 共和元年立春 11:59
+		{-720, 2, 22, "己巳"},  // 魯隱公三年夏曆二月己巳日，西元前 720 年 2 月 22 日 (wiki: 干支)
+		{-211, 11, 1, "癸丑"},  // 三十七年十月癸丑，始皇出遊 (wiki: 干支)
 		{1384, 12, 13, "甲子"}, // 洪武十七年，朔旦冬至甲子
 		{1912, 2, 18, "甲子"},
 		{9912, 2, 18, "甲子"},
@@ -234,5 +236,31 @@ func TestWCalToGCal(t *testing.T) {
 		assert.Equal(t, pair.gy, y, "For wcal date %04d-%02d-%02d expected year %d got %d", pair.wy, pair.wm, pair.wd, pair.gy, y)
 		assert.Equal(t, pair.gm, m, "For wcal date %04d-%02d-%02d expected month %d got %d", pair.wy, pair.wm, pair.wd, pair.gm, m)
 		assert.Equal(t, pair.gd, d, "For wcal date %04d-%02d-%02d expected day %d got %d", pair.wy, pair.wm, pair.wd, pair.gd, d)
+	}
+}
+
+func TestWCalToGHCal(t *testing.T) {
+	for _, pair := range []struct {
+		gy, gm, gd int
+		wy, wm, wd int
+	}{
+		{0, 1, 1, -842, 2, 12},
+		{1, 1, 1, -841, 2, 12},
+		{0, 0, 0, -720, 2, 22},  // 魯隱公三年夏曆二月己巳日，西元前 720 年 2 月 22 日 (wiki: 干支)
+		{0, 0, 0, -211, 11, 1},  // 三十七年十月癸丑，始皇出遊 (wiki: 干支)
+		{0, 0, 0, 1384, 12, 13}, // 洪武十七年，朔旦冬至甲子
+		{0, 0, 0, 1978, 3, 4},   // Birthday
+		{0, 0, 0, 2000, 1, 1},   // J2000
+		{0, 0, 0, 2017, 8, 19},  // Today
+		// {2225, 11, 19, 1384, 12, 13},
+		// {2752, 9, 7, 1911, 10, 10}, // not manual calculate yet
+		// {2819, 2, 2, 1978, 3, 4},   // not manual calculate yet
+	} {
+		y, m, d := WesternCalendarToGHC(pair.wy, pair.wm, pair.wd)
+		jd := JulianCalendarToJD(pair.wy, pair.wm, pair.wd)
+		fmt.Printf("WC %5d-%02d-%02d == GHC  %5d-%02d-%02d, JD %f\n", pair.wy, pair.wm, pair.wd, y, m, d, jd)
+		// assert.Equal(t, pair.gy, y, "For wcal date %04d-%02d-%02d expected year %d got %d", pair.wy, pair.wm, pair.wd, pair.gy, y)
+		// assert.Equal(t, pair.gm, m, "For wcal date %04d-%02d-%02d expected month %d got %d", pair.wy, pair.wm, pair.wd, pair.gm, m)
+		// assert.Equal(t, pair.gd, d, "For wcal date %04d-%02d-%02d expected day %d got %d", pair.wy, pair.wm, pair.wd, pair.gd, d)
 	}
 }
